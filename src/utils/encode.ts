@@ -30,6 +30,8 @@ const generateRandomChar = (): string => {
   return characters[index];
 };
 
+// Implementation of Fisher Yates Shuffle Algorithm
+// @src -> https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
 function shuffle(a: string[]) {
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
