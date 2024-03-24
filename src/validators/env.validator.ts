@@ -8,6 +8,7 @@ const data = {
   JWT_SECRET: process.env.JWT_SECRET,
   DATABASE_URL: process.env.DATABASE_URL,
   BASE_URL: process.env.BASE_URL,
+  DOMAIN: process.env.DOMAIN
 };
 const { value, error } = envSchema.validate(data);
 if (error) throw new Error(`Validation error: ${error.message}`);
@@ -17,4 +18,5 @@ export const config: EnvConfig = {
   JWT_SECRET: value.JWT_SECRET,
   DATABASE_URL: value.DATABASE_URL,
   BASE_URL: value.BASE_URL,
+  DOMAIN: value.DOMAIN
 };

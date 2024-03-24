@@ -5,4 +5,5 @@ export const envSchema = Joi.object({
   PORT: Joi.number().required(),
   JWT_SECRET: Joi.string().required(),
   BASE_URL: Joi.string().required(),
+  DOMAIN: Joi.string().required(),
 });
