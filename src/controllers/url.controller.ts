@@ -20,8 +20,7 @@ export const encodeUrlController = async (req: Request, res: Response) => {
     if (!isValidUrl) errorResponseHandler(res, 400, new Error("Invalid Url"));
 
     // generate url short code
-    const encodedUrl = encodeUrl(6);
-    const shortUrl = DOMAIN + encodeUrl
+    const encodedUrl: string = encodeUrl(6);
 
     //extract userAgent
     let userAgentList: string[];
@@ -34,22 +33,20 @@ export const encodeUrlController = async (req: Request, res: Response) => {
     geoLocationList.push(geoLocation);
     const createdUrlModel = await createNewUrlObject({
       originalUrl: originalUrl,
-      shortUrl: shortUrl,
+      shortUrl: encodedUrl,
       userAgents: userAgentList,
       geoLocation: geoLocationList,
     });
 
     if (!createdUrlModel)
       errorResponseHandler(res, 400, new Error("Url shortening failed"));
-
-    successResponseHandler(res, 201, createdUrlModel);
+    const shortUrl = DOMAIN + createdUrlModel.shortUrl;
+    successResponseHandler(res, 201, { shortUrl });
   } catch (e: any) {
     errorResponseHandler(res, 500, new Error(e));
   }
 };
 
-export const decodeUrlController = (req: Request, res: Response) => {
-    
-};
+export const decodeUrlController = (req: Request, res: Response) => {};
 
 export const statisticsController = (req: Request, res: Response) => {};
