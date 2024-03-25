@@ -90,4 +90,24 @@ export const decodeUrlController = async (req: Request, res: Response) => {
   }
 };
 
-export const statisticsController = (req: Request, res: Response) => {};
+export const statisticsController = async (req: Request, res: Response) => {
+  try {
+    const shortUrl = req.params.url;
+    const isValidUrl = validateUrl(shortUrl);
+    if (!isValidUrl) errorResponseHandler(res, 400, new Error("Invalid Url"));
+
+    const extractedQuery = extractShortUrlCode(shortUrl);
+    if (!extractedQuery)
+      errorResponseHandler(res, 400, new Error("Invalid Url"));
+    const foundShortUrl = await findUrlObjByShortUrl(extractedQuery);
+    const data = {
+      shortUrl: foundShortUrl.shortUrl,
+      visits: foundShortUrl.visits,
+      userAgents: foundShortUrl.userAgentList,
+      geoLocation: foundShortUrl.geoLocationList,
+    };
+    successResponseHandler(res, 200, data);
+  } catch (e: any) {
+    errorResponseHandler(res, 500, new Error(e));
+  }
+};
