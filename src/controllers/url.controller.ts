@@ -66,7 +66,7 @@ export const decodeUrlController = async (req: Request, res: Response) => {
     if (!extractedQuery)
       errorResponseHandler(res, 400, new Error("Invalid Url"));
     const foundShortUrl = await findUrlObjByShortUrl(extractedQuery);
-    console.log(foundShortUrl)
+    
     if (!foundShortUrl)
       errorResponseHandler(res, 404, new Error("Url Object Not Found"));
 
