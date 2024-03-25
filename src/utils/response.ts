@@ -21,3 +21,13 @@ export const successResponseHandler = (
     data: data,
   });
 };
+
+
+export const redirectRequestHandler = (
+  res: Response,
+  statusCode: number,
+) => {
+  return res.status(statusCode)
+};
+
+
