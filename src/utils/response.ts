@@ -25,9 +25,10 @@ export const successResponseHandler = (
 
 export const redirectRequestHandler = (
   res: Response,
+  url: string,
   statusCode: number,
 ) => {
-  return res.status(statusCode)
+  return res.status(statusCode).redirect(url)
 };
 
 
