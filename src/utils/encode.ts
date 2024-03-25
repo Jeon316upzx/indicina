@@ -11,7 +11,7 @@ export const encodeUrl = (keyLength: number): string => {
   return result;
 };
 
-const getAllCharacters = (): string[] => {
+export const getAllCharacters = (): string[] => {
   const lowerCaseAlphabets = "abcdefghijklmnopqrstuvwxyz";
   const upperCaseAlphabets = lowerCaseAlphabets.toUpperCase();
   const numericalDigits = "0123456789";
@@ -23,11 +23,11 @@ const getAllCharacters = (): string[] => {
   return shuffle(chars);
 };
 
-const getRandomIndex = (min: number, max: number): number => {
+export const getRandomIndex = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const generateRandomChar = (): string => {
+export const generateRandomChar = (): string => {
   const characters = getAllCharacters();
   const index = getRandomIndex(0, characters.length);
   return characters[index];
@@ -35,7 +35,7 @@ const generateRandomChar = (): string => {
 
 // Implementation of Fisher Yates Shuffle Algorithm
 // @src -> https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
-function shuffle(a: string[]) {
+export function shuffle(a: string[]) {
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [a[i], a[j]] = [a[j], a[i]];
