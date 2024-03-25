@@ -15,3 +15,16 @@ export const findUrlObjByShortUrl = async (shortUrl: string): Promise<any> => {
   });
   return urlObj;
 };
+
+export const updateUrlStatistics = async (
+  data: Omit<UrlType, "originalUrl">
+): boolean => {
+  await UrlModel.findOneAndUpdate(
+    {
+      shortUrl: data.shortUrl,
+    },
+    { ...data },
+    { new: true }
+  );
+  return true;
+};
