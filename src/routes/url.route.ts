@@ -7,7 +7,7 @@ import {
 const urlRouter = Router();
 
 urlRouter.post("/encode", encodeUrlController);
-urlRouter.get("/decode/:shortUrl", decodeUrlController);
-urlRouter.get("/statistic/:url", decodeUrlController);
+urlRouter.get("/decode", decodeUrlController);
+urlRouter.get("/statistic/:url_path", statisticsController);
 
 export default urlRouter;
