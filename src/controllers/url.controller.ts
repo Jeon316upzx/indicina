@@ -12,7 +12,10 @@ import {
   findUrlObjByShortUrl,
   updateUrlStatistics,
 } from "../services/url.services";
-import { extractShortUrlCode } from "../utils/extractShortCode";
+import {
+  extractShortUrlCode,
+  validateShortCode,
+} from "../utils/extractShortCode";
 
 const { DOMAIN } = config;
 
@@ -20,14 +23,13 @@ export const encodeUrlController = async (req: Request, res: Response) => {
   try {
     // extract originalUrl from request body
     const { originalUrl } = req.body;
-     
+
     // validate url data
     const isValidUrl = validateUrl(originalUrl);
     if (!isValidUrl) errorResponseHandler(res, 400, new Error("Invalid Url"));
 
     // generate url short code
     const encodedUrl: string = encodeUrl(6);
-    
 
     //extract userAgent
     let userAgentList: string[] = [];
@@ -56,29 +58,31 @@ export const encodeUrlController = async (req: Request, res: Response) => {
 
 export const decodeUrlController = async (req: Request, res: Response) => {
   try {
-    const shortUrl = req.params.shortUrl;
+    const shortUrl = req.query.shortUrl as string;
+
     const isValidUrl = validateUrl(shortUrl);
     if (!isValidUrl) errorResponseHandler(res, 400, new Error("Invalid Url"));
     const extractedQuery = extractShortUrlCode(shortUrl);
     if (!extractedQuery)
       errorResponseHandler(res, 400, new Error("Invalid Url"));
     const foundShortUrl = await findUrlObjByShortUrl(extractedQuery);
+    console.log(foundShortUrl)
     if (!foundShortUrl)
       errorResponseHandler(res, 404, new Error("Url Object Not Found"));
 
     //extract userAgent
-    let userAgentList: string[] = [];
+    let userAgentList: string[] = foundShortUrl.userAgents || [];
     let userAgent = req.headers["user-agent"];
     userAgentList.push(userAgent);
 
     // extract ip address
-    let geoLocationList: string[] = [];
+    let geoLocationList: string[] = foundShortUrl.geoLocation || [];
     let geoLocation = req.ip;
     geoLocationList.push(geoLocation);
-
+    const newVistCount = foundShortUrl.visits + 1
     const data = {
       shortUrl: foundShortUrl.shortUrl,
-      visits: foundShortUrl.visits++,
+      visits: newVistCount,
       userAgents: userAgentList,
       geoLocation: geoLocationList,
     };
@@ -93,19 +97,16 @@ export const decodeUrlController = async (req: Request, res: Response) => {
 
 export const statisticsController = async (req: Request, res: Response) => {
   try {
-    const shortUrl = req.params.url;
-    const isValidUrl = validateUrl(shortUrl);
+    const shortCode = req.params.url_path;
+    const isValidUrl = validateShortCode(shortCode);
     if (!isValidUrl) errorResponseHandler(res, 400, new Error("Invalid Url"));
 
-    const extractedQuery = extractShortUrlCode(shortUrl);
-    if (!extractedQuery)
-      errorResponseHandler(res, 400, new Error("Invalid Url"));
-    const foundShortUrl = await findUrlObjByShortUrl(extractedQuery);
+    const foundShortUrl = await findUrlObjByShortUrl(shortCode);
     const data = {
       shortUrl: foundShortUrl.shortUrl,
       visits: foundShortUrl.visits,
-      userAgents: foundShortUrl.userAgentList,
-      geoLocation: foundShortUrl.geoLocationList,
+      userAgents: foundShortUrl.userAgents,
+      geoLocation: foundShortUrl.geoLocation,
     };
     successResponseHandler(res, 200, data);
   } catch (e: any) {
