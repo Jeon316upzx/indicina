@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
 import {
   errorResponseHandler,
+  redirectRequestHandler,
   successResponseHandler,
 } from "../utils/response";
 import { validateUrl } from "../validators/url.validator";
 import { encodeUrl } from "../utils/encode";
 import { config } from "../validators/env.validator";
-import { createNewUrlObject } from "../services/url.services";
+import {
+  createNewUrlObject,
+  findUrlObjByShortUrl,
+} from "../services/url.services";
+import { extractShortUrlCode } from "../utils/extractShortCode";
 
 const { DOMAIN } = config;
 
@@ -39,7 +44,7 @@ export const encodeUrlController = async (req: Request, res: Response) => {
     });
 
     if (!createdUrlModel)
-      errorResponseHandler(res, 400, new Error("Url shortening failed"));
+      errorResponseHandler(res, 400, new Error("Url Shortening Failed"));
     const shortUrl = DOMAIN + createdUrlModel.shortUrl;
     successResponseHandler(res, 201, { shortUrl });
   } catch (e: any) {
@@ -47,6 +52,23 @@ export const encodeUrlController = async (req: Request, res: Response) => {
   }
 };
 
-export const decodeUrlController = (req: Request, res: Response) => {};
+export const decodeUrlController = async (req: Request, res: Response) => {
+  try {
+    const shortUrl = req.params.shortUrl;
+    const isValidUrl = validateUrl(shortUrl);
+    if (!isValidUrl) errorResponseHandler(res, 400, new Error("Invalid Url"));
+    const extractedQuery = extractShortUrlCode(shortUrl);
+    if (!extractedQuery)
+      errorResponseHandler(res, 400, new Error("Invalid Url"));
+    const foundShortUrl = await findUrlObjByShortUrl(extractedQuery);
+    if (!foundShortUrl)
+      errorResponseHandler(res, 404, new Error("Url Object Not Found"));
+
+    const redirectUrl = `${DOMAIN}${foundShortUrl.shortUrl}`;
+    redirectRequestHandler(res, redirectUrl, 302);
+  } catch (e: any) {
+    errorResponseHandler(res, 500, new Error(e));
+  }
+};
 
 export const statisticsController = (req: Request, res: Response) => {};
