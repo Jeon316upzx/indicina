@@ -20,21 +20,22 @@ export const encodeUrlController = async (req: Request, res: Response) => {
   try {
     // extract originalUrl from request body
     const { originalUrl } = req.body;
-
+     
     // validate url data
     const isValidUrl = validateUrl(originalUrl);
     if (!isValidUrl) errorResponseHandler(res, 400, new Error("Invalid Url"));
 
     // generate url short code
     const encodedUrl: string = encodeUrl(6);
+    
 
     //extract userAgent
-    let userAgentList: string[];
+    let userAgentList: string[] = [];
     let userAgent = req.headers["user-agent"];
     userAgentList.push(userAgent);
 
     // extract ip address
-    let geoLocationList: string[];
+    let geoLocationList: string[] = [];
     let geoLocation = req.ip;
     geoLocationList.push(geoLocation);
     const createdUrlModel = await createNewUrlObject({
@@ -66,12 +67,12 @@ export const decodeUrlController = async (req: Request, res: Response) => {
       errorResponseHandler(res, 404, new Error("Url Object Not Found"));
 
     //extract userAgent
-    let userAgentList: string[];
+    let userAgentList: string[] = [];
     let userAgent = req.headers["user-agent"];
     userAgentList.push(userAgent);
 
     // extract ip address
-    let geoLocationList: string[];
+    let geoLocationList: string[] = [];
     let geoLocation = req.ip;
     geoLocationList.push(geoLocation);
 
@@ -83,7 +84,7 @@ export const decodeUrlController = async (req: Request, res: Response) => {
     };
     await updateUrlStatistics(data);
 
-    const redirectUrl = `${DOMAIN}${foundShortUrl.shortUrl}`;
+    const redirectUrl = foundShortUrl.originalUrl;
     redirectRequestHandler(res, redirectUrl, 302);
   } catch (e: any) {
     errorResponseHandler(res, 500, new Error(e));

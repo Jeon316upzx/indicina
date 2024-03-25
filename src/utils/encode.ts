@@ -1,9 +1,12 @@
-export const encodeUrl = (keyLength: number ): string => {
+export const encodeUrl = (keyLength: number): string => {
   let salt = keyLength || 4;
 
-  let result = null;
+  let result = "";
   for (let i = 0; i < salt; i++) {
-    result += generateRandomChar();
+    let char = generateRandomChar();
+    if (char !== null) {
+      result += char;
+    }
   }
   return result;
 };
@@ -26,7 +29,7 @@ const getRandomIndex = (min: number, max: number): number => {
 
 const generateRandomChar = (): string => {
   const characters = getAllCharacters();
-  const index = getRandomIndex(1, characters.length - 1);
+  const index = getRandomIndex(0, characters.length);
   return characters[index];
 };
 
