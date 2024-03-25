@@ -18,7 +18,7 @@ export const findUrlObjByShortUrl = async (shortUrl: string): Promise<any> => {
 
 export const updateUrlStatistics = async (
   data: Omit<UrlType, "originalUrl">
-): boolean => {
+): Promise<boolean> => {
   await UrlModel.findOneAndUpdate(
     {
       shortUrl: data.shortUrl,
