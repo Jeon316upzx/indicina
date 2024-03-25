@@ -8,3 +8,10 @@ export const createNewUrlObject = async (data: UrlType): Promise<any> => {
 
   return newUrlObj.save();
 };
+
+export const findUrlObjByShortUrl = async (shortUrl: string): Promise<any> => {
+  const urlObj = await UrlModel.findOne({
+    shortUrl: shortUrl,
+  });
+  return urlObj;
+};
