@@ -10,6 +10,7 @@ import { config } from "../validators/env.validator";
 import {
   createNewUrlObject,
   findUrlObjByShortUrl,
+  updateUrlStatistics,
 } from "../services/url.services";
 import { extractShortUrlCode } from "../utils/extractShortCode";
 
@@ -63,6 +64,24 @@ export const decodeUrlController = async (req: Request, res: Response) => {
     const foundShortUrl = await findUrlObjByShortUrl(extractedQuery);
     if (!foundShortUrl)
       errorResponseHandler(res, 404, new Error("Url Object Not Found"));
+
+    //extract userAgent
+    let userAgentList: string[];
+    let userAgent = req.headers["user-agent"];
+    userAgentList.push(userAgent);
+
+    // extract ip address
+    let geoLocationList: string[];
+    let geoLocation = req.ip;
+    geoLocationList.push(geoLocation);
+
+    const data = {
+      shortUrl: foundShortUrl.shortUrl,
+      visits: foundShortUrl.visits++,
+      userAgents: userAgentList,
+      geoLocation: geoLocationList,
+    };
+    await updateUrlStatistics(data);
 
     const redirectUrl = `${DOMAIN}${foundShortUrl.shortUrl}`;
     redirectRequestHandler(res, redirectUrl, 302);
