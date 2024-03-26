@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "This project is a url-shortner",
   "scripts": {
-    "test": "jest",
+    "test": "rimraf ./dist && jest",
     "dev": "cp .env.local .env && npm run start",
     "start": "npm run build && node dist/src/server.js",
     "build": "rimraf ./dist && tsc"
